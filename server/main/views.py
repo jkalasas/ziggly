@@ -45,7 +45,3 @@ def login():
 def logout():
     logout_user()
     return redirect(url_for('main.login'))
-
-@bp.post('/csrf-test')
-def csrf_test():
-    return 'Success'

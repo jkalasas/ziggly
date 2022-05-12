@@ -12,7 +12,6 @@
     {% endif %}
     <link rel="stylesheet" href="{{ url_for('static', filename='dist/css/bootstrap.min.css') }}">
     <script src="{{ url_for('static', filename='dist/js/bootstrap.bundle.min.js') }}"></script>
-    <script src="{{ url_for('static', filename='dist/js/petite-vue.min.js') }}"></script>
     {% block required_js %}{% endblock %}
     {% block page_css %}{% endblock %}
 </head>
@@ -41,12 +40,6 @@
         </div>
     </nav>
     {% block content %}{% endblock %}
-
-    <script>
-        PetiteVue.createApp({
-
-        }).mount('#navbar')
-    </script>
     {% block page_js %}{% endblock %}
 </body>
 

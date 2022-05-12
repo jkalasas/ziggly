@@ -25,29 +25,3 @@
     </div>
 </main>
 {% endblock %}
-
-{% block page_js %}
-<script>
-    const page_session = PetiteVue.reactive({
-        test: 1,
-        csrf_token: '{{ csrf_token() }}',
-    });
-
-    class Components {
-        static counter(props) {
-            return {
-                count: props.initialCount,
-                inc() {
-                    this.count++;
-                },
-            }
-        }
-    }
-
-    PetiteVue.createApp({
-        $delimiters: ['${', '}'],
-        page_session,
-        Counter: Components.counter,
-    }).mount('main')
-</script>
-{% endblock %}
