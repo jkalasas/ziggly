@@ -6,7 +6,7 @@ class Config:
     FLASK_ENV = 'development'
     DEBUG = False
     TESTING = False
-    WTF_CSRF_ENABLED = True
+    CSRF_ENABLED = False
     SECRET_KEY = os.getenv('SECRET_KEY', 'MEOWMEOW')
     SQLALCHEMY_TRACK_MODIFICATIONS = False
     SQLALCHEMY_ECHO = False

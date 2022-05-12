@@ -37,9 +37,11 @@ class CSRFProtect:
         return client
         
     def verify_token(self):
-        if request.method == 'GET':
+        if request.method == 'GET' or not self.app.config.get('CSRF_ENABLED', False):
             return
         client_token = request.form.get('csrf_token', 
-            request.headers.get('X-CSRF-Token'))
+            request.headers.get('X-CSRF-Token',
+            request.cookies.get('csrf_token'))
+        )
         if not self.verify(client_token):
             return Response('Invalid CSRF Token'), 401
