@@ -1,11 +1,13 @@
 from datetime import date, datetime
 
+from sqlalchemy_serializer import SerializerMixin
 from sqlalchemy.ext.hybrid import hybrid_property
 
 from . import db
 
-class Item(db.Model):
+class Item(db.Model, SerializerMixin):
     __tablename__ = 'item'
+    serialize_only = ('id', 'name', 'price', 'added_on',)
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(200), nullable=False)
     price = db.Column(db.Float, nullable=False)
@@ -44,8 +46,8 @@ class ItemPurchase(db.Model):
 class Purchase(db.Model):
     __tablename__ = 'purchase'
     id = db.Column(db.Integer, primary_key=True)
-    items = db.relationship('Item', secondary=ItemPurchase, lazy='dynamic', 
-        backref=db.backref('purchases', lazy='dynamic'))
+    items = db.relationship('ItemPurchase', lazy='dynamic', 
+        backref=db.backref('purchase', uselist=False))
     discount = db.Column(db.Float, default=0)
     total = db.Column(db.Float, nullable=False)
     added_on = db.Column(db.DateTime, default=datetime.utcnow)
