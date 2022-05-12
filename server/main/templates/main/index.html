@@ -1,0 +1,51 @@
+{% extends 'main/base.html' %}
+
+{% block content %}
+{% include 'partials/add_itemmodal.html' %}
+<main role="main">
+    <div class="container">
+        <div class="row" v-scope="Counter({ initialCount: 5})">
+            <div class="col"><p>${ count }</p></div>
+            <div class="col">
+                <button class="btn btn-primary" @click="inc">Increase count</button>
+            </div>
+        </div>
+    </div>
+    <div v-scope="AddItem({})"></div>
+</main>
+{% endblock %}
+
+{% block page_js %}
+<script>
+    const page_session = PetiteVue.reactive({
+        test: 1,
+        csrf_token: '{{ csrf_token() }}',
+    });
+
+    class Components {
+        static counter(props) {
+            return {
+                count: props.initialCount,
+                inc() {
+                    this.count++;
+                },
+            }
+        }
+        static AddItem(props) {
+            return {
+                $template: '#template-add-item-modal',
+                name: props.name || '',
+                price: props.price || '',
+                quantity: props.quantity || '',
+            }
+        }
+    }
+
+    PetiteVue.createApp({
+        $delimiters: ['${', '}'],
+        page_session,
+        Counter: Components.counter,
+        AddItem: Components.AddItem,
+    }).mount('main')
+</script>
+{% endblock %}
