@@ -1,0 +1,53 @@
+{% extends 'main/base.html' %}
+
+{% block content %}
+<main role="main" id="main">
+    <div class="container">
+        <div class="row align-items-center border-bottom border-3">
+            <div class="col-6">
+                <h1>Items</h1>
+            </div>
+            <div class="col-6 d-flex justify-content-end align-items-center">
+                {% include 'main/partials/new_item.html' %}
+            </div>
+        </div>
+        <table class="table">
+            <thead>
+                <tr>
+                    <th scope="col">ID</th>
+                    <th scope="col">Name</th>
+                    <th scope="col">Price</th>
+                    <th scope="col"></th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for item in items.items %}
+                <tr>
+                    <th scope="row">{{ item.id }}</th>
+                    <th>{{ item.name }}</th>
+                    <th>{{ item.price }} PHP</th>
+                    <th>
+                        <div class="btn-group">
+                            <a href="{{ url_for('main.item_info', id=item.id) }}" class="btn btn-primary">Show</a>
+                            <form action="{{ url_for('main.manage_item', id=item.id) }}" method="POST">
+                                <input type="hidden" name="_method" value="DELETE">
+                                <input type="hidden" name="csrf_token" :value="page_session.csrf_token">
+                                <button type="submit" class="btn btn-danger">Delete</button>
+                            </form>
+                        </div>
+                    </th>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</main>
+{% endblock %}
+
+{% block page_js %}
+<script>
+    PetiteVue.createApp({
+        page_session,
+    }).mount('#main')
+</script>
+{% endblock %}

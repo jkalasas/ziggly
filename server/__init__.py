@@ -43,7 +43,9 @@ def init_db(app: Flask) -> None:
 def init_plugins(app: Flask) -> None:
     from .plugins.flask_session import Session
     from .plugins.csrf import CSRFProtect
+    from .plugins.momentjs import momentjs
     app.config['SESSION_SQLALCHEMY'] = db
+    app.jinja_env.globals['momentjs'] = momentjs
     Session(app)
     CSRFProtect(app)
 

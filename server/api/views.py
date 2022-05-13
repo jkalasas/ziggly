@@ -1,3 +1,4 @@
+from multiprocessing.sharedctypes import Value
 from flask import g, request
 
 from server.models import db, Item
@@ -50,3 +51,19 @@ def update_item(id: int):
 def get_items():
     items = [x.to_dict() for x in Item.query.order_by(Item.name)]
     return {'success': True, 'items': items}
+
+@bp.get('/search/item')
+def search_item():
+    name = request.args.get('search', '')
+    try:
+        page = int(request.args.get('p', 1))
+    except ValueError:
+        page = 1
+    result = Item.query.filter(Item.name.ilike(f'%{name}%')) \
+        .order_by(Item.name).paginate(page, 10)
+    context = {
+        'success': True,
+        'result': [ x.to_dict() for x in result.items ],
+        'has_next': result.has_next,
+    }
+    return context

@@ -1,8 +1,16 @@
 {% extends 'main/base.html' %}
 
 {% block content %}
-<main role="main">
+<main role="main" id="main">
     <div class="container">
     </div>
 </main>
+{% endblock %}
+
+{% block page_js %}
+<script>
+PetiteVue.createApp({
+    page_session,
+}).mount('#main');
+</script>
 {% endblock %}

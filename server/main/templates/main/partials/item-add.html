@@ -1,0 +1,78 @@
+<template id="add-item-template">
+    <button class="btn btn-success" data-bs-toggle="modal" data-bs-target="#add-item">Add</button>
+    <div class="modal fade" id="add-item" tabindex="-1" aria-labelledby="add-item" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <form action="{{ url_for('main.add_stock') }}" class="modal-content" method="POST">
+                <input type="hidden" name="csrf_token" :value="page_session.csrf_token">
+                <div class="modal-header">
+                    <h5 class="modal-title">Add Item</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <input type="hidden" v-if="item" name="item" :value="item.id">
+                    <div class="form-group mb-3" v-else>
+                        <label for="item" class="form-label">Item</label>
+                        <select name="item" class="item-select form-control"></select>
+                    </div>
+                    <div class="form-group mb-3">
+                        <label for="quantity" class="form-label">Quantity</label>
+                        <input type="number" name="quantity" class="form-control">
+                    </div>
+                    <div class="form-group mb-3">
+                        <label for="per-item-cost" class="form-label">Cost per item</label>
+                        <input type="number" name="per-item-cost" class="form-control" min="0" step="0.01">
+                    </div>
+                    <div class="form-group mb-3">
+                        <label for="per-item-cost" class="form-label">Total Cost</label>
+                        <input type="number" name="total-cost" class="form-control" min="0" step="0.01">
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Discard</button>
+                    <button type="submit" class="btn btn-primary">Save</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</template>
+<script>
+    function addItemComponent(props) {
+        return {
+            $template: '#add-item-template',
+            item: props.item || null,
+            mounted() {
+                console.log('ahtdog');
+                $('.item-select').select2({
+                    placeholder: 'Select Item',
+                    theme: 'bootstrap-5',
+                    ajax: {
+                        url: '{{ url_for("api.search_item") }}',
+                        data: function (params) {
+                            var query = {
+                                search: params.term,
+                                page: params.page || 1,
+                            }
+                            return query
+                        },
+                        processResults: function (data, params) {
+                            params.page = params.page || 1;
+                            results = data.result.map(item => {
+                                return {
+                                    id: item.id,
+                                    text: item.name
+                                }
+                            });
+                            console.log(results);
+                            return {
+                                results: results,
+                                pagination: {
+                                    more: data.has_next
+                                }
+                            }
+                        },
+                    }
+                });
+            }
+        }
+    }
+</script>

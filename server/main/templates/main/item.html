@@ -1,0 +1,148 @@
+{% extends 'main/base.html' %}
+{% from 'main/macros/item_add.html' import addItemComponent %}
+
+{% block page_templates %}
+{% include 'main/partials/item-add.html' %}
+{% endblock %}
+
+{% block content %}
+<main role="main" id="main">
+    <div class="container">
+        <div class="row align-items-center border-bottom border-3 mb-3">
+            <div class="col">
+                <h1>{{ item.name }}</h1>
+            </div>
+            <div class="col d-flex justify-content-end align-items-center">
+                <div v-scope="addItemComponent({ item: page_session.item })"></div>
+                <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#new-item">
+                    Edit
+                </button>
+                <div class="modal fade" id="new-item" tabindex="-1" aria-labelledby="new-item" aria-hidden="true">
+                    <div class="modal-dialog modal-dialog-centered">
+                        <form class="modal-content" action="{{ url_for('main.manage_item', id=item.id) }}"
+                            method="POST">
+                            <input type="hidden" name="csrf_token" :value="page_session.csrf_token">
+                            <input type="hidden" name="_method" value="PUT">
+                            <div class="modal-header">
+                                <h5 class="modal-title">Item</h5>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                    aria-label="Close"></button>
+                            </div>
+                            <div class="modal-body">
+                                <div class="form-group mb-3">
+                                    <label for="name" class="form-label">Name</label>
+                                    <input type="text" name="name" id="name" class="form-control"
+                                        value="{{ item.name }}">
+                                </div>
+                                <div class="form-group">
+                                    <label for="price" class="form-label">Price</label>
+                                    <input type="number" name="price" id="price" min="0" step="0.01"
+                                        class="form-control" value="{{ item.price }}">
+                                </div>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Discard</button>
+                                <button type="submit" class="btn btn-primary">Save</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+                <a href="#" class="btn btn-danger">Delete</a>
+            </div>
+        </div>
+        <div class="row border-bottom border-2 mb-3">
+            <h3>Item Stats</h3>
+        </div>
+        <div class="row mb-3">
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th scope="col">ID</th>
+                        <th scope="col">Price</th>
+                        <th scope="col">In Stock</th>
+                        <th scope="col">Total Sold</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <th scope="row">{{ item.id }}</th>
+                        <th>{{ item.price }} PHP</th>
+                        <th>{{ item.in_stock }}</th>
+                        <th>{{ item.total_sold }} PHP</th>
+                        <th></th>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        <div class="row border-bottom border-2 mb-3">
+            <div class="d-flex align-items-center">
+                <h3>Inventory History</h3>
+                <a href="{{ url_for('main.item_stock', id=item.id) }}" class="btn btn-transparent border rounded mx-3">See all</a>
+            </div>
+        </div>
+        <div class="row mb-3">
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th scope="col">ID</th>
+                        <th scope="col">Quantity</th>
+                        <th scope="col">Cost</th>
+                        <th scope="col">Total Costs</th>
+                        <th scope="col">Time Added</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for stock in stocks %}
+                    <tr>
+                        <th scope="row">{{ stock.id }}</th>
+                        <th>{{ stock.quantity }}</th>
+                        <th>{{ stock.per_item_cost }}</th>
+                        <th>{{ stock.cost }}</th>
+                        <th>{{ momentjs(stock.added_on).format('MMMM DD, YYYY') }}</th>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        <div class="row mb-3 border-bottom border-border-2">
+            <h3>Purchase History</h3>
+        </div>
+        <div class="row">
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th scope="col">ID</th>
+                        <th scope="col">Quantity</th>
+                        <th scope="col">Total</th>
+                        <th scope="col">Time</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for purchase in purchases %}
+                    <tr>
+                        <th scope="row">{{ purchase.id }}</th>
+                        <th>{{ purchase.quantity }}</th>
+                        <th>{{ purchase.total }}</th>
+                        <th>{{ momentjs(purchase.added_on).format('MMMM DD, YYYY') }}</th>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</main>
+{% endblock %}
+
+{% block page_js %}
+<script>
+    page_session.item = {
+        id: {{ item.id }},
+        name: '{{ item.name }}',
+    };
+
+    PetiteVue.createApp({
+        page_session,
+        addItemComponent,
+    }).mount('#main');
+</script>
+{% endblock %}

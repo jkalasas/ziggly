@@ -12,7 +12,7 @@ def login_user(user: User):
 def logout_user():
     if session.get('signed_in'):
         session['signed_in'] = False
-        session['user_id'] = None
+        session['signed_in'] = None
 
 def login_required(fn):
     @wraps(fn)

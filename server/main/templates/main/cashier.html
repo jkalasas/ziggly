@@ -1,0 +1,70 @@
+{% extends 'main/base.html' %}
+
+{% block content %}
+<main id="main" role="main">
+    <div class="container">
+        <div class="row mb-3 border-bottom border-3">
+            <h1>Cashier</h1>
+        </div>
+        <div class="row">
+            <div class="col-6"></div>
+            <div class="col-6" v-scope="listCartComponent({})">
+                <div class="border rounded p-3">
+                    <table class="table">
+                        <thead>
+                            <th scope="col">Item</th>
+                            <th scope="col">Quantity</th>
+                            <th scope="col">Price</th>
+                            <th scope="col">Total</th>
+                        </thead>
+                        <tbody>
+                            <tr v-for="item in page_session.cart.items">
+                                <th scope="row">{{ '{{item.name}}' }}</th>
+                                <th>{{ '{{item.quantity}}' }}</th>
+                                <th>{{ '{{item.price}} PHP' }}</th>
+                                <th>{{ '{{item.total}} PHP' }}</th>
+                            </tr>
+                            <tr>
+                                <th>Grand Total</th>
+                                <th></th>
+                                <th></th>
+                                <th>{{ '{{grandTotal}} PHP' }}</th>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</main>
+{% endblock %}
+
+{% block page_js %}
+<script>
+    page_session.cart = {
+        items: [{
+            name: 'Hotdog',
+            quantity: 20,
+            price: 12,
+            total: 240,
+        }],
+    };
+
+    function listCartComponent(props) {
+        return {
+            get grandTotal() {
+                const total = page_session.cart.items.reduce((prevVal, curVal) => {
+                    return prevVal + curVal.total
+                }, 0);
+                return total;
+            },
+        };
+    }
+
+    PetiteVue.createApp({
+        $delimiters: ['${', '}'],
+        page_session,
+        listCartComponent,
+    }).mount('#main');
+</script>
+{% endblock %}

@@ -1,0 +1,28 @@
+<button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#new-item">
+    New
+</button>
+<div class="modal fade" id="new-item" tabindex="-1" aria-labelledby="new-item" aria-hidden="true">
+    <div class="modal-dialog">
+        <form class="modal-content" action="{{ url_for('main.new_item') }}" method="POST">
+            <input type="hidden" name="csrf_token" :value="page_session.csrf_token">
+            <div class="modal-header">
+                <h5 class="modal-title">Item</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div class="form-group mb-3">
+                    <label for="name" class="form-label">Name</label>
+                    <input type="text" name="name" id="name" class="form-control">
+                </div>
+                <div class="form-group">
+                    <label for="price" class="form-label">Price</label>
+                    <input type="number" name="price" id="price" min="0" class="form-control">
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Discard</button>
+                <button type="submit" class="btn btn-primary">Save</button>
+            </div>
+        </form>
+    </div>
+</div>
