@@ -23,7 +23,7 @@
                         <tr>
                             <th scope="row"><a href="{{ url_for('main.receipt', id=purchase.id) }}">{{ purchase.id }}</a></th>
                             <th>{{ purchase.items.count() }}</th>
-                            <th>{{ purchase.total }}</th>
+                            <th>₱{{ format_currency(purchase.total) }}</th>
                             <th>{{ momentjs(purchase.added_on).format('MMMM DD, YYYY') }}</th>
                         </tr>
                         {% endfor %}

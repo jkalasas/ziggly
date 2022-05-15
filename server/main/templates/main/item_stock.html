@@ -24,8 +24,8 @@
                         <tr>
                             <th scope="row">{{ stock.id }}</th>
                             <th>{{ stock.quantity }}</th>
-                            <th>{{ stock.per_item_cost }}</th>
-                            <th>{{ stock.cost }}</th>
+                            <th>₱{{ format_currency(stock.per_item_cost) }}</th>
+                            <th>₱{{ format_currency(stock.cost) }}</th>
                             <th>{{ momentjs(stock.added_on).format('MMMM DD, YYYY') }}</th>
                             <th><form action="{{ url_for('main.manage_stock', id=stock.id) }}" method="POST">
                                 <input type="hidden" name="csrf_token" :value="page_session.csrf_token">

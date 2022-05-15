@@ -22,15 +22,15 @@
                         <tr>
                             <th scope="row">{{ item.item.name }}</th>
                             <th>{{ item.quantity }}</th>
-                            <th>{{ item.price }}</th>
-                            <th>{{ item.total }}</th>
+                            <th>₱{{ format_currency(item.price) }}</th>
+                            <th>₱{{ format_currency(item.total) }}</th>
                         </tr>
                         {% endfor%}
                         <tr>
                             <th scope="row">Grand Total</th>
                             <th></th>
                             <th></th>
-                            <th>{{ purchase.total }}</th>
+                            <th>₱{{ format_currency(purchase.total) }}</th>
                         </tr>
                     </tbody>
                 </table>

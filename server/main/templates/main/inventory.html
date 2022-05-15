@@ -32,7 +32,7 @@
                         <th scope="row">{{ stock.id }}</th>
                         <th><a href="{{ url_for('main.item_info', id=stock.item.id) }}">{{ stock.item.name }}</a></th>
                         <th>{{ stock.quantity }}</th>
-                        <th>{{ stock.cost }}</th>
+                        <th>₱{{ format_currency(stock.cost) }}</th>
                         <th>{{ momentjs(stock.added_on).format('MMMM DD, YYYY') }}</th>
                         <th>
                             <div class="btn-group">

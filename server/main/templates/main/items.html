@@ -27,7 +27,7 @@
                         <tr>
                             <th scope="row">{{ item.id }}</th>
                             <th>{{ item.name }}</th>
-                            <th>{{ item.price }} PHP</th>
+                            <th>₱{{ format_currency(item.price) }}</th>
                             <th>
                                 <div class="btn-group">
                                     <a href="{{ url_for('main.item_info', id=item.id) }}" class="btn btn-primary">Show</a>

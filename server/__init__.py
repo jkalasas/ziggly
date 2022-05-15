@@ -41,11 +41,13 @@ def init_db(app: Flask) -> None:
     migrate.init_app(app, db)
 
 def init_plugins(app: Flask) -> None:
+    from .plugins.currency import format_currency
     from .plugins.flask_session import Session
     from .plugins.csrf import CSRFProtect
     from .plugins.momentjs import momentjs
     app.config['SESSION_SQLALCHEMY'] = db
     app.jinja_env.globals['momentjs'] = momentjs
+    app.jinja_env.globals['format_currency'] = format_currency
     Session(app)
     CSRFProtect(app)
 

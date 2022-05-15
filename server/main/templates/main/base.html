@@ -21,6 +21,7 @@
     {% block required_js %}{% endblock %}
     {% block page_css %}{% endblock %}
 </head>
+
 <body>
     {% block page_templates %}
     {% endblock %}
@@ -64,10 +65,21 @@
     </nav>
     {% block content %}{% endblock %}
     <script>
+        const currencyFormatter = new Intl.NumberFormat('en-US', {
+            style: 'currency',
+            currency: 'PHP',
+            minimumFractionDigits: 2
+        });
+
+        function floatToPHP(val) {
+            return currencyFormatter.format(val);
+        }
+
         const page_session = PetiteVue.reactive({
             csrf_token: '{{ csrf_token() }}',
         });
     </script>
     {% block page_js %}{% endblock %}
 </body>
+
 </html>
