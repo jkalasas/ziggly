@@ -2,39 +2,41 @@
 
 {% block content %}
 <main id="main" role="main">
-    <div class="container">
+    <div class="container mt-3">
         <div class="row border-bottom border-3">
             <h1>{{ item.name }} Stocks</h1>
         </div>
         <div class="row">
-            <table class="table">
-                <thead>
-                    <tr>
-                        <th scope="col">ID</th>
-                        <th scope="col">Quantity</th>
-                        <th scope="col">Cost</th>
-                        <th scope="col">Total Costs</th>
-                        <th scope="col">Time Added</th>
-                        <th></th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {% for stock in stocks.items %}
-                    <tr>
-                        <th scope="row">{{ stock.id }}</th>
-                        <th>{{ stock.quantity }}</th>
-                        <th>{{ stock.per_item_cost }}</th>
-                        <th>{{ stock.cost }}</th>
-                        <th>{{ momentjs(stock.added_on).format('MMMM DD, YYYY') }}</th>
-                        <th><form action="{{ url_for('main.manage_stock', id=stock.id) }}" method="POST">
-                            <input type="hidden" name="csrf_token" :value="page_session.csrf_token">
-                            <input type="hidden" name="_method" value="DELETE">
-                            <button type="submit" class="btn btn-danger">Delete</button>
-                        </form></th>
-                    </tr>
-                    {% endfor %}
-                </tbody>
-            </table>
+            <div class="col-12 overflow-auto">
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th scope="col">ID</th>
+                            <th scope="col">Quantity</th>
+                            <th scope="col">Cost</th>
+                            <th scope="col">Total Costs</th>
+                            <th scope="col">Time Added</th>
+                            <th></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for stock in stocks.items %}
+                        <tr>
+                            <th scope="row">{{ stock.id }}</th>
+                            <th>{{ stock.quantity }}</th>
+                            <th>{{ stock.per_item_cost }}</th>
+                            <th>{{ stock.cost }}</th>
+                            <th>{{ momentjs(stock.added_on).format('MMMM DD, YYYY') }}</th>
+                            <th><form action="{{ url_for('main.manage_stock', id=stock.id) }}" method="POST">
+                                <input type="hidden" name="csrf_token" :value="page_session.csrf_token">
+                                <input type="hidden" name="_method" value="DELETE">
+                                <button type="submit" class="btn btn-danger">Delete</button>
+                            </form></th>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
         </div>
     </div>
 </main>

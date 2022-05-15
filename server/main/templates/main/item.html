@@ -8,7 +8,7 @@
 
 {% block content %}
 <main role="main" id="main">
-    <div class="container">
+    <div class="container mt-3">
         <div class="row align-items-center border-bottom border-3 mb-3">
             <div class="col">
                 <h1>{{ item.name }}</h1>
@@ -23,25 +23,27 @@
             <h3>Item Stats</h3>
         </div>
         <div class="row mb-3">
-            <table class="table">
-                <thead>
-                    <tr>
-                        <th scope="col">ID</th>
-                        <th scope="col">Price</th>
-                        <th scope="col">In Stock</th>
-                        <th scope="col">Total Sold</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr>
-                        <th scope="row">{{ item.id }}</th>
-                        <th>{{ item.price }} PHP</th>
-                        <th>{{ item.in_stock }}</th>
-                        <th>{{ item.total_sold }} PHP</th>
-                        <th></th>
-                    </tr>
-                </tbody>
-            </table>
+            <div class="col-12 overflow-auto">
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th scope="col">ID</th>
+                            <th scope="col">Price</th>
+                            <th scope="col">In Stock</th>
+                            <th scope="col">Total Sold</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <th scope="row">{{ item.id }}</th>
+                            <th>{{ item.price }} PHP</th>
+                            <th>{{ item.in_stock }}</th>
+                            <th>{{ item.total_sold }} PHP</th>
+                            <th></th>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
         </div>
         <div class="row border-bottom border-2 mb-3">
             <div class="d-flex align-items-center">
@@ -50,28 +52,30 @@
             </div>
         </div>
         <div class="row mb-3">
-            <table class="table">
-                <thead>
-                    <tr>
-                        <th scope="col">ID</th>
-                        <th scope="col">Quantity</th>
-                        <th scope="col">Cost</th>
-                        <th scope="col">Total Costs</th>
-                        <th scope="col">Time Added</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {% for stock in stocks %}
-                    <tr>
-                        <th scope="row">{{ stock.id }}</th>
-                        <th>{{ stock.quantity }}</th>
-                        <th>{{ stock.per_item_cost }}</th>
-                        <th>{{ stock.cost }}</th>
-                        <th>{{ momentjs(stock.added_on).format('MMMM DD, YYYY') }}</th>
-                    </tr>
-                    {% endfor %}
-                </tbody>
-            </table>
+            <div class="col-12 overflow-auto">
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th scope="col">ID</th>
+                            <th scope="col">Quantity</th>
+                            <th scope="col">Cost</th>
+                            <th scope="col">Total Costs</th>
+                            <th scope="col">Time Added</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for stock in stocks %}
+                        <tr>
+                            <th scope="row">{{ stock.id }}</th>
+                            <th>{{ stock.quantity }}</th>
+                            <th>{{ stock.per_item_cost }}</th>
+                            <th>{{ stock.cost }}</th>
+                            <th>{{ momentjs(stock.added_on).format('MMMM DD, YYYY') }}</th>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
         </div>
         <div class="row mb-3 border-bottom border-border-2">
             <h3>Purchase History</h3>

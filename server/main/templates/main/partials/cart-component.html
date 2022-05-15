@@ -1,34 +1,36 @@
 <template id="cart-template">
     <div class="border rounded p-3">
-        <table class="table">
-            <thead>
-                <th scope="col">Item</th>
-                <th scope="col">Quantity</th>
-                <th scope="col">Price</th>
-                <th scope="col">Total</th>
-                <th></th>
-            </thead>
-            <tbody>
-                <tr v-for="item in cart.items">
-                    <th scope="row">{{ '{{item.name}}' }}</th>
-                    <th>{{ '{{item.quantity}}' }}</th>
-                    <th>{{ '{{item.price}} PHP' }}</th>
-                    <th>{{ '{{item.quantity * item.price}} PHP' }}</th>
-                    <th>
-                        <div class="btn-group">
-                            <button class="btn btn-primary" @click="showEdit(item)">Edit</button>
-                            <button class="btn btn-danger" @click="delItem(item)">Del</button>
-                        </div>
-                    </th>
-                </tr>
-                <tr>
-                    <th>Grand Total</th>
+        <div class="mw-100 overflow-auto">
+            <table class="table">
+                <thead>
+                    <th scope="col">Item</th>
+                    <th scope="col">Quantity</th>
+                    <th scope="col">Price</th>
+                    <th scope="col">Total</th>
                     <th></th>
-                    <th></th>
-                    <th>{{ '{{grandTotal}} PHP' }}</th>
-                </tr>
-            </tbody>
-        </table>
+                </thead>
+                <tbody>
+                    <tr v-for="item in cart.items">
+                        <th scope="row">{{ '{{item.name}}' }}</th>
+                        <th>{{ '{{item.quantity}}' }}</th>
+                        <th>{{ '{{item.price}} PHP' }}</th>
+                        <th>{{ '{{item.quantity * item.price}} PHP' }}</th>
+                        <th>
+                            <div class="btn-group">
+                                <button class="btn btn-primary" @click="showEdit(item)">Edit</button>
+                                <button class="btn btn-danger" @click="delItem(item)">Del</button>
+                            </div>
+                        </th>
+                    </tr>
+                    <tr>
+                        <th>Grand Total</th>
+                        <th></th>
+                        <th></th>
+                        <th>{{ '{{grandTotal}} PHP' }}</th>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
         <div class="d-flex justify-content-end">
             <div class="btn-group">
                 <button class="btn btn-success" @click="printReceipt">Save</button>
