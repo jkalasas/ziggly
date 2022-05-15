@@ -1,4 +1,4 @@
-from datetime import datetime
+from datetime import datetime, timedelta
 
 from flask import abort, g, redirect, render_template, request, session, url_for
 from sqlalchemy import func, text
@@ -21,8 +21,15 @@ def referer_or(alternative):
 @bp.get('/')
 @login_required
 def index():
+    print(Item.most_sales())
+    most_sales, total_sales = Item.most_sales()
+    most_sold, total_sold = Item.most_sold()
     context = {
-        'title': 'Home'
+        'title': 'Home',
+        'most_sold': most_sold,
+        'total_sold': total_sold,
+        'most_sales': most_sales,
+        'total_sales': total_sales,
     }
     return render_template('main/index.html', **context)
 

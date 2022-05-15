@@ -1,8 +1,68 @@
 {% extends 'main/base.html' %}
 
+{% block page_css %}
+<style>
+    .card {
+        transition: box-shadow 300ms ease;
+    }
+
+    .card:hover {
+        box-shadow: 0 0.5rem 0.25rem rgba(0, 0, 0, 0.5);
+    }
+</style>
+{% endblock %}
+
 {% block content %}
 <main role="main" id="main">
-    <div class="container">
+    <div class="container col-12 col-md-10 col-lg-6 mt-3">
+        <div class="row row-cols-1 row-cols-md-2 g-4">
+            <div class="col">
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title">Cashier Mode</h5>
+                        <p class="card-text">
+                            <a href="{{ url_for('main.cashier') }}" class="stretched-link"></a>
+                        </p>
+                    </div>
+                </div>
+            </div>
+            <div class="col">
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title">Manage Stocks</h5>
+                        <a href="{{ url_for('main.inventory') }}" class="stretched-link"></a>
+                    </div>
+                </div>
+            </div>
+            <div class="col">
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title">Highest Sales this Month</h5>
+                        <span class="card-text">
+                            <span class="badge rounded-pill bg-warning">
+                                <a href="{{ url_for('main.item_info', id=most_sales.id) }}" class="stretched-link link-dark">
+                                    {{ most_sales.name }}
+                                </a>
+                            </span>
+                            with a record of ₱{{ format_currency(total_sales) }} total sales.
+                        </span>
+                    </div>
+                </div>
+            </div>
+            <div class="col">
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title">Most sold this Month</h5>
+                        <span class="card-text">
+                            <span class="badge rounded-pill bg-success"><a
+                                    href="{{ url_for('main.item_info', id=most_sold.id) }}" class="stretched-link link-light">{{
+                                    most_sold.name }}</a></span>
+                            with a record of {{ total_sold }} items sold.
+                        </span>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
 </main>
 {% endblock %}
