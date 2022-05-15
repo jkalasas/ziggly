@@ -58,15 +58,17 @@ def purchase():
     data = request.json
     purchased_items = []
     grand_total = 0
+    purchase = Purchase(total=0)
     for item in data.get('items', []):
         qitem = Item.query.filter(Item.id==item['id']).first_or_404()
         quantity = int(item['quantity'])
         total = quantity * qitem.price
         grand_total += total
         purchased_items.append(
-            ItemPurchase(item=qitem, quantity=quantity, price=qitem.price, total=total)
+            ItemPurchase(item=qitem, purchase=purchase, 
+                quantity=quantity, price=qitem.price, total=total)
         )
-    purchase = Purchase(items=purchased_items, total=grand_total)
+    purchase.total = grand_total
     db.session.add(purchase)
     db.session.commit()
     return {
