@@ -1,4 +1,5 @@
 from datetime import datetime, timedelta
+from uuid import uuid4
 
 from sqlalchemy import func, text
 from sqlalchemy_serializer import SerializerMixin
@@ -6,6 +7,8 @@ from sqlalchemy.ext.hybrid import hybrid_property
 
 from . import db
 
+def random_uuid():
+    return uuid4().hex
 
 class Item(db.Model, SerializerMixin):
     __tablename__ = 'item'
@@ -115,6 +118,7 @@ class ItemPurchase(db.Model):
 class Purchase(db.Model):
     __tablename__ = 'purchase'
     id = db.Column(db.Integer, primary_key=True)
+    reference_id = db.Column(db.String(32), default=random_uuid)
     items = db.relationship('ItemPurchase', lazy='dynamic', cascade="all, delete-orphan",
                             backref=db.backref('purchase', uselist=False))
     discount = db.Column(db.Float, default=0)
