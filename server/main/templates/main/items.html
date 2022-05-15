@@ -11,7 +11,7 @@
                 {% include 'main/partials/new_item.html' %}
             </div>
         </div>
-        <div class="row">
+        <div class="row mb-3">
             <div class="col-12 overflow-auto">
                 <table class="table">
                     <thead>
@@ -43,6 +43,12 @@
                     </tbody>
                 </table>
             </div>
+        </div>
+        <div class="d-flex justify-content-center">
+            <a href="{{ url_for('main.items', p=items.prev_num) }}" 
+                class="btn btn-primary rounded me-3 {%if not items.has_prev%}disabled{%endif%}">Previous</a>
+            <a href="{{ url_for('main.items', p=items.next_num) }}" 
+                class="btn btn-primary rounded {%if not items.has_next%}disabled{%endif%}">Next</a>
         </div>
     </div>
 </main>

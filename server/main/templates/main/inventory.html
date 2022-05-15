@@ -14,35 +14,43 @@
             <div class="col-6 d-flex justify-content-end align-items-center" v-scope="addItemComponent({})">
             </div>
         </div>
-        <div class="mw-100 overflow-auto">
-            <table class="table">
-                <thead>
-                    <tr>
-                        <th scope="col">ID</th>
-                        <th scope="col">Item</th>
-                        <th scope="col">Quantity</th>
-                        <th scope="col">Cost</th>
-                        <th scope="col">Time Added</th>
-                        <th scope="col"></th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {% for stock in stocks.items %}
-                    <tr>
-                        <th scope="row">{{ stock.id }}</th>
-                        <th><a href="{{ url_for('main.item_info', id=stock.item.id) }}">{{ stock.item.name }}</a></th>
-                        <th>{{ stock.quantity }}</th>
-                        <th>₱{{ format_currency(stock.cost) }}</th>
-                        <th>{{ momentjs(stock.added_on).format('MMMM DD, YYYY') }}</th>
-                        <th>
-                            <div class="btn-group">
-                                <a href="#" class="btn btn-danger">Delete</a>
-                            </div>
-                        </th>
-                    </tr>
-                    {% endfor %}
-                </tbody>
-            </table>
+        <div class="row mb-3">
+            <div class="col-12 overflow-auto">
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th scope="col">ID</th>
+                            <th scope="col">Item</th>
+                            <th scope="col">Quantity</th>
+                            <th scope="col">Cost</th>
+                            <th scope="col">Time Added</th>
+                            <th scope="col"></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for stock in stocks.items %}
+                        <tr>
+                            <th scope="row">{{ stock.id }}</th>
+                            <th><a href="{{ url_for('main.item_info', id=stock.item.id) }}">{{ stock.item.name }}</a></th>
+                            <th>{{ stock.quantity }}</th>
+                            <th>₱{{ format_currency(stock.cost) }}</th>
+                            <th>{{ momentjs(stock.added_on).format('MMMM DD, YYYY') }}</th>
+                            <th>
+                                <div class="btn-group">
+                                    <a href="#" class="btn btn-danger">Delete</a>
+                                </div>
+                            </th>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        <div class="d-flex justify-content-center">
+            <a href="{{ url_for('main.inventory', p=stocks.prev_num) }}" 
+                class="btn btn-primary rounded me-3 {%if not stocks.has_prev%}disabled{%endif%}">Previous</a>
+            <a href="{{ url_for('main.inventory', p=stocks.next_num) }}" 
+                class="btn btn-primary rounded {%if not stocks.has_next%}disabled{%endif%}">Next</a>
         </div>
     </div>
 </main>
