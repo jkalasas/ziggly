@@ -11,28 +11,46 @@
             <h1>Cashier</h1>
         </div>
         <div class="row">
-            <div class="col-12 col-md-6" v-scope="addItemComponent({})" @mounted="initSelectItem">
+            <div class="col-12 col-md-6" v-scope="addItemComponent({currentEdit: page_session.editor.item})"
+                @mounted="initSelectItem">
                 <div class="border rounded p-3">
                     <div class="form-group mb-3">
                         <label for="item" class="form-label">Item</label>
                         <select name="item" class="item-select form-control" style="width: 100%;"></select>
                     </div>
                     <div class="form-group mb-3">
-                        <label for="quantity" class="form-label">Quantity</label>
-                        <input type="number" name="quantity" class="form-control" v-model="currentItem.quantity">
+                        <label for="stock" class="form-label">Stock</label>
+                        <input type="number" name="stock" class="form-control" :value="currentItem.stock" disabled>
                     </div>
                     <div class="form-group mb-3">
-                        <label for="price" class="form-label">Price</label>
+                        <label for="quantity" class="form-label">Quantity</label>
+                        <input type="number" name="quantity" class="form-control" :max="currentItem.stock"
+                            v-model="currentItem.quantity">
+                    </div>
+                    <div class="form-group mb-3">
+                        <label for="price" class="form-label">Price (₱)</label>
                         <input type="number" name="price" class="form-control" :value="currentItem.price" disabled>
                     </div>
                     <div class="form-group mb-3">
-                        <label for="total" class="form-label">Total</label>
+                        <label for="total" class="form-label">Total (₱)</label>
                         <input type="number" name="total" class="form-control"
                             :value="currentItem.price*currentItem.quantity" disabled>
                     </div>
                     <div class="btn-group">
                         <button class="btn btn-primary" @click="addItem">Add</button>
                         <button class="btn btn-danger" @click="discard">Discard</button>
+                    </div>
+                </div>
+                <div class="position-fixed bottom-0 end-0 p-3" style="z-index: 11">
+                    <div id="liveToast" class="toast align-items-center text-white bg-danger border-0" role="alert"
+                        aria-live="assertive" aria-atomic="true" @mounted="initErrorToast($el)">
+                        <div class="d-flex">
+                            <div class="toast-body">
+                                Max quantity has been reached!
+                            </div>
+                            <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"
+                                aria-label="Close"></button>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -47,22 +65,48 @@
 <script>
     page_session.cart = {
         items: [],
+        getItem(item_id) {
+            return this.items.find(({ id }) => id === item_id);
+        },
+    };
+    page_session.editor = {
+        item: {
+            id: null,
+            name: '',
+            quantity: 0,
+            price: 0,
+            stock: 0,
+        },
     };
 
     function addItemComponent(props) {
+        console.log(props);
         const component = {
-            item_select: null,
-            currentItem: {
-                id: null,
-                name: '',
-                quantity: 0,
-                price: 0,
+            element: {
+                errorToast: null,
+                itemSelect: null,
+            },
+            currentItem: props.currentEdit,
+            initErrorToast(elem) {
+                this.element.errorToast = elem;
+            },
+            showErrorToast() {
+                if (this.element.errorToast) {
+                    const toast = new bootstrap.Toast(this.element.errorToast);
+                    toast.show();
+                }
             },
             addItem() {
                 const item = this.currentItem;
+                const oldItem = page_session.cart.getItem(item.id);
+                const total_quantity = item.quantity + (oldItem ? oldItem.quantity : 0);
                 if (!(item.quantity && item.id)) return;
+                console.log(item.stock - total_quantity);
+                if (item.stock - total_quantity < 0) {
+                    this.showErrorToast();
+                    return;
+                }
                 const items = page_session.cart.items;
-                const oldItem = items.find(({ id }) => id === item.id);
                 if (oldItem) {
                     oldItem.quantity += item.quantity;
                 } else {
@@ -81,7 +125,7 @@
         };
 
         component.initSelectItem = function () {
-            this.item_select = $('.item-select').select2({
+            this.element.itemSelect = $('.item-select').select2({
                 placeholder: 'Select Item',
                 theme: 'bootstrap-5',
                 ajax: {
@@ -110,12 +154,15 @@
                     },
                 }
             });
-            this.item_select.on('change', () => {
-                const data = JSON.parse(this.item_select.val());
+            this.element.itemSelect.on('change', () => {
+                const data = JSON.parse(this.element.itemSelect.val());
+                console.log(data);
                 if (data) {
                     component.currentItem.id = data.id;
+                    const oldItem = page_session.cart.getItem(data.id);
+                    component.currentItem.stock = data.stock - (oldItem ? oldItem.quantity : 0);
                     component.currentItem.name = data.name;
-                    component.currentItem.price = data.price;
+                    component.currentItem.price += data.price;
                 }
             });
         };
@@ -124,7 +171,6 @@
     }
 
     PetiteVue.createApp({
-        $delimiters: ['${', '}'],
         page_session,
         addItemComponent,
         listCartComponent,

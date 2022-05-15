@@ -81,11 +81,14 @@ def search_item():
         page = int(request.args.get('p', 1))
     except ValueError:
         page = 1
-    result = Item.query.filter(Item.name.ilike(f'%{name}%')) \
+    query = Item.query.filter(Item.name.ilike(f'%{name}%')) \
         .order_by(Item.name).paginate(page, 10)
+    result = []
+    for x in query.items:
+        result.append({**x.to_dict(), 'stock': x.in_stock})
     context = {
         'success': True,
-        'result': [ x.to_dict() for x in result.items ],
-        'has_next': result.has_next,
+        'result': result,
+        'has_next': query.has_next,
     }
     return context
