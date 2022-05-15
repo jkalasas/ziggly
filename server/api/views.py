@@ -1,7 +1,8 @@
 from multiprocessing.sharedctypes import Value
+from statistics import quantiles
 from flask import g, request
 
-from server.models import db, Item
+from server.models import db, Item, ItemPurchase, Purchase
 from server.plugins.login_manager import login_required
 from . import bp
 
@@ -51,6 +52,27 @@ def update_item(id: int):
 def get_items():
     items = [x.to_dict() for x in Item.query.order_by(Item.name)]
     return {'success': True, 'items': items}
+
+@bp.post('/purchase')
+def purchase():
+    data = request.json
+    purchased_items = []
+    grand_total = 0
+    for item in data.get('items', []):
+        qitem = Item.query.filter(Item.id==item['id']).first_or_404()
+        quantity = int(item['quantity'])
+        total = quantity * qitem.price
+        grand_total += total
+        purchased_items.append(
+            ItemPurchase(item=qitem, quantity=quantity, total=total)
+        )
+    purchase = Purchase(items=purchased_items, total=grand_total)
+    db.session.add(purchase)
+    db.session.commit()
+    return {
+        'success': True,
+        'result': {'id': purchase.id}
+    }
 
 @bp.get('/search/item')
 def search_item():

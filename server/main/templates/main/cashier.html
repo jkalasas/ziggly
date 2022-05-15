@@ -1,5 +1,9 @@
 {% extends 'main/base.html' %}
 
+{% block page_templates %}
+{% include 'main/partials/cart-component.html' %}
+{% endblock %}
+
 {% block content %}
 <main id="main" role="main">
     <div class="container">
@@ -7,32 +11,32 @@
             <h1>Cashier</h1>
         </div>
         <div class="row">
-            <div class="col-6"></div>
-            <div class="col-6" v-scope="listCartComponent({})">
+            <div class="col-6" v-scope="addItemComponent({})" @mounted="initSelectItem">
                 <div class="border rounded p-3">
-                    <table class="table">
-                        <thead>
-                            <th scope="col">Item</th>
-                            <th scope="col">Quantity</th>
-                            <th scope="col">Price</th>
-                            <th scope="col">Total</th>
-                        </thead>
-                        <tbody>
-                            <tr v-for="item in page_session.cart.items">
-                                <th scope="row">{{ '{{item.name}}' }}</th>
-                                <th>{{ '{{item.quantity}}' }}</th>
-                                <th>{{ '{{item.price}} PHP' }}</th>
-                                <th>{{ '{{item.total}} PHP' }}</th>
-                            </tr>
-                            <tr>
-                                <th>Grand Total</th>
-                                <th></th>
-                                <th></th>
-                                <th>{{ '{{grandTotal}} PHP' }}</th>
-                            </tr>
-                        </tbody>
-                    </table>
+                    <div class="form-group mb-3">
+                        <label for="item" class="form-label">Item</label>
+                        <select name="item" class="item-select form-control"></select>
+                    </div>
+                    <div class="form-group mb-3">
+                        <label for="quantity" class="form-label">Quantity</label>
+                        <input type="number" name="quantity" class="form-control" v-model="currentItem.quantity">
+                    </div>
+                    <div class="form-group mb-3">
+                        <label for="price" class="form-label">Price</label>
+                        <input type="number" name="price" class="form-control" :value="currentItem.price" disabled>
+                    </div>
+                    <div class="form-group mb-3">
+                        <label for="total" class="form-label">Total</label>
+                        <input type="number" name="total" class="form-control"
+                            :value="currentItem.price*currentItem.quantity" disabled>
+                    </div>
+                    <div class="btn-group">
+                        <button class="btn btn-primary" @click="addItem">Add</button>
+                        <button class="btn btn-danger" @click="discard">Discard</button>
+                    </div>
                 </div>
+            </div>
+            <div class="col-6" v-scope="listCartComponent({ cart: page_session.cart })">
             </div>
         </div>
     </div>
@@ -42,29 +46,88 @@
 {% block page_js %}
 <script>
     page_session.cart = {
-        items: [{
-            name: 'Hotdog',
-            quantity: 20,
-            price: 12,
-            total: 240,
-        }],
+        items: [],
     };
 
-    function listCartComponent(props) {
-        return {
-            get grandTotal() {
-                const total = page_session.cart.items.reduce((prevVal, curVal) => {
-                    return prevVal + curVal.total
-                }, 0);
-                return total;
+    function addItemComponent(props) {
+        const component = {
+            item_select: null,
+            currentItem: {
+                id: null,
+                name: '',
+                quantity: 0,
+                price: 0,
             },
+            addItem() {
+                const item = this.currentItem;
+                if (!(item.quantity && item.id)) return;
+                const items = page_session.cart.items;
+                const oldItem = items.find(({ id }) => id === item.id);
+                if (oldItem) {
+                    oldItem.quantity += item.quantity;
+                } else {
+                    page_session.cart.items.push({
+                        id: item.id,
+                        name: item.name,
+                        quantity: item.quantity,
+                        price: item.price,
+                    });
+                }
+                this.discard();
+            },
+            discard() {
+                this.currentItem.quantity = 0;
+            }
         };
+
+        component.initSelectItem = function () {
+            this.item_select = $('.item-select').select2({
+                placeholder: 'Select Item',
+                theme: 'bootstrap-5',
+                ajax: {
+                    url: '{{ url_for("api.search_item") }}',
+                    data: function (params) {
+                        var query = {
+                            search: params.term,
+                            page: params.page || 1,
+                        }
+                        return query
+                    },
+                    processResults: function (data, params) {
+                        params.page = params.page || 1;
+                        results = data.result.map(item => {
+                            return {
+                                id: JSON.stringify(item),
+                                text: item.name
+                            }
+                        });
+                        return {
+                            results: results,
+                            pagination: {
+                                more: data.has_next
+                            }
+                        }
+                    },
+                }
+            });
+            this.item_select.on('change', () => {
+                const data = JSON.parse(this.item_select.val());
+                if (data) {
+                    component.currentItem.id = data.id;
+                    component.currentItem.name = data.name;
+                    component.currentItem.price = data.price;
+                }
+            });
+        };
+
+        return component;
     }
 
     PetiteVue.createApp({
         $delimiters: ['${', '}'],
         page_session,
+        addItemComponent,
         listCartComponent,
-    }).mount('#main');
+    }).mount();
 </script>
 {% endblock %}
