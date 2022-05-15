@@ -116,7 +116,8 @@ def items():
 def new_item():
     name = request.form.get('name')
     price = request.form.get('price')
-    item = Item(name=name, price=price)
+    bar_code = request.form.get('bar-code')
+    item = Item(name=name, price=price, bar_code=bar_code)
     db.session.add(item)
     db.session.commit()
     return redirect(url_for('main.items_all'))
@@ -167,6 +168,7 @@ def update_item(id: int):
     item = Item.query.filter(Item.id==id).first_or_404()
     item.name = request.form.get('name')
     item.price = request.form.get('price')
+    item.bar_code = request.form.get('bar-code')
     db.session.commit()
     return redirect(referer_or(url_for('main.item_info', id=id)))
 

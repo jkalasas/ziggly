@@ -80,7 +80,6 @@
     };
 
     function addItemComponent(props) {
-        console.log(props);
         const component = {
             element: {
                 errorToast: null,
@@ -101,7 +100,6 @@
                 const oldItem = page_session.cart.getItem(item.id);
                 const total_quantity = item.quantity + (oldItem ? oldItem.quantity : 0);
                 if (!(item.quantity && item.id)) return;
-                console.log(item.stock - total_quantity);
                 if (item.stock - total_quantity < 0) {
                     this.showErrorToast();
                     return;
@@ -112,6 +110,7 @@
                 } else {
                     page_session.cart.items.push({
                         id: item.id,
+                        bar_code: item.bar_code,
                         name: item.name,
                         quantity: item.quantity,
                         price: item.price,
@@ -142,7 +141,7 @@
                         results = data.result.map(item => {
                             return {
                                 id: JSON.stringify(item),
-                                text: item.name
+                                text: `${item.bar_code || ''} ${item.name}`,
                             }
                         });
                         return {
@@ -156,9 +155,9 @@
             });
             this.element.itemSelect.on('change', () => {
                 const data = JSON.parse(this.element.itemSelect.val());
-                console.log(data);
                 if (data) {
                     component.currentItem.id = data.id;
+                    component.currentItem.bar_code = data.bar_code;
                     const oldItem = page_session.cart.getItem(data.id);
                     component.currentItem.stock = data.stock - (oldItem ? oldItem.quantity : 0);
                     component.currentItem.name = data.name;

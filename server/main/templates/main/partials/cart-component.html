@@ -11,7 +11,7 @@
                 </thead>
                 <tbody>
                     <tr v-for="item in cart.items">
-                        <th scope="row">{{ '{{item.name}}' }}</th>
+                        <th scope="row">{{ '{{ item.bar_code || "" }} {{item.name}}' }}</th>
                         <th>{{ '{{item.quantity}}' }}</th>
                         <th>{{ '{{floatToPHP(item.price)}}' }}</th>
                         <th>{{ '{{floatToPHP(item.quantity * item.price)}}' }}</th>

@@ -11,7 +11,7 @@
     <div class="container mt-3">
         <div class="row align-items-center border-bottom border-3 mb-3">
             <div class="col">
-                <h1>{{ item.name }}</h1>
+                <h1>{{ item.name }} {{ item.bar_code }}</h1>
             </div>
             <div class="col d-flex justify-content-end align-items-center">
                 <div v-scope="addItemComponent({ item: page_session.item })"></div>

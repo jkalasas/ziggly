@@ -1,7 +1,6 @@
-from multiprocessing.sharedctypes import Value
-from statistics import quantiles
 from flask import g, request
 
+from sqlalchemy import or_
 from server.models import db, Item, ItemPurchase, Purchase
 from server.plugins.login_manager import login_required
 from . import bp
@@ -23,9 +22,10 @@ def get_item(id: int):
 @bp.post('/item')
 def add_item():
     data = request.json
+    bar_code = data.get('bar-code','')
     name = data.get('name')
     price = data.get('price')
-    item = Item(name=name, price=price)
+    item = Item(name=name, price=price, bar_code=bar_code)
     db.session.add(item)
     db.session.commit()
     result = {
@@ -83,7 +83,7 @@ def search_item():
         page = int(request.args.get('p', 1))
     except ValueError:
         page = 1
-    query = Item.query.filter(Item.name.ilike(f'%{name}%')) \
+    query = Item.query.filter(or_(Item.name.ilike(f'%{name}%'), Item.bar_code.ilike(f'%{name}%'))) \
         .order_by(Item.name).paginate(page, 10)
     result = []
     for x in query.items:

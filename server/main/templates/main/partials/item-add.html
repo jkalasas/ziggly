@@ -59,7 +59,7 @@
                             results = data.result.map(item => {
                                 return {
                                     id: item.id,
-                                    text: item.name
+                                    text: `${item.bar_code || ''} ${item.name}`,
                                 }
                             });
                             return {

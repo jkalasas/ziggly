@@ -20,7 +20,7 @@
                     <tbody>
                         {% for item in purchase.items %}
                         <tr>
-                            <th scope="row">{{ item.item.name }}</th>
+                            <th scope="row">{{ item.item.bar_code or '' }} {{ item.item.name }}</th>
                             <th>{{ item.quantity }}</th>
                             <th>₱{{ format_currency(item.price) }}</th>
                             <th>₱{{ format_currency(item.total) }}</th>

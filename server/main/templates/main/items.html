@@ -17,6 +17,7 @@
                     <thead>
                         <tr>
                             <th scope="col">ID</th>
+                            <th scope="col">Bar Code</th>
                             <th scope="col">Name</th>
                             <th scope="col">Price</th>
                             <th scope="col"></th>
@@ -26,6 +27,7 @@
                         {% for item in items.items %}
                         <tr>
                             <th scope="row">{{ item.id }}</th>
+                            <th>{{ item.bar_code or '' }}</th>
                             <th>{{ item.name }}</th>
                             <th>₱{{ format_currency(item.price) }}</th>
                             <th>

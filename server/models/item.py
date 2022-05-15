@@ -9,8 +9,9 @@ from . import db
 
 class Item(db.Model, SerializerMixin):
     __tablename__ = 'item'
-    serialize_only = ('id', 'name', 'price', 'added_on',)
+    serialize_only = ('id', 'bar_code', 'name', 'price', 'added_on',)
     id = db.Column(db.Integer, primary_key=True)
+    bar_code = db.Column(db.String(128), nullable=True)
     name = db.Column(db.String(200), nullable=False)
     price = db.Column(db.Float, nullable=False)
     added_on = db.Column(db.DateTime, default=datetime.utcnow)
