@@ -12,7 +12,7 @@
                     <input type="hidden" v-if="item" name="item" :value="item.id">
                     <div class="form-group mb-3" v-else>
                         <label for="item" class="form-label">Item</label>
-                        <select name="item" class="item-select form-control"></select>
+                        <select name="item" class="item-select form-control" @mounted="initSelectItem($el)"></select>
                     </div>
                     <div class="form-group mb-3">
                         <label for="quantity" class="form-label">Quantity</label>
@@ -40,9 +40,8 @@
         return {
             $template: '#add-item-template',
             item: props.item || null,
-            mounted() {
-                console.log('ahtdog');
-                $('.item-select').select2({
+            initSelectItem(el) {
+                $(el).select2({
                     placeholder: 'Select Item',
                     theme: 'bootstrap-5',
                     ajax: {
@@ -62,7 +61,6 @@
                                     text: item.name
                                 }
                             });
-                            console.log(results);
                             return {
                                 results: results,
                                 pagination: {

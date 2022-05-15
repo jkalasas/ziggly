@@ -1,0 +1,39 @@
+{% extends 'main/base.html' %}
+
+{% block content %}
+<main role="main">
+    <div class="container mt-3">
+        <div class="row mb-3 border-bottom border-3">
+            <h1>Purchases</h1>
+        </div>
+        <div class="row align-items-center">
+            <div class="col-12 overflow-auto">
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th scope="col">ID</th>
+                            <th scope="col">Items</th>
+                            <th scope="col">Total</th>
+                            <th scope="col">Purchased On</th>
+                            <th></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for purchase in purchases.items %}
+                        <tr>
+                            <th scope="row"><a href="{{ url_for('main.receipt', id=purchase.id) }}">{{ purchase.id }}</a></th>
+                            <th>{{ purchase.items.count() }}</th>
+                            <th>{{ purchase.total }}</th>
+                            <th>{{ momentjs(purchase.added_on).format('MMMM DD, YYYY') }}</th>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</main>
+{% endblock %}
+
+{% block page_js %}
+{% endblock %}

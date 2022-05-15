@@ -1,5 +1,9 @@
 {% extends 'main/base.html' %}
 
+{% block page_templates %}
+{% include 'main/partials/item-add.html' %}
+{% endblock %}
+
 {% block content %}
 <main role="main">
     <div class="container mt-3">
@@ -7,8 +11,7 @@
             <div class="col-6">
                 <h1>Inventory</h1>
             </div>
-            <div class="col-6 d-flex justify-content-end align-items-center">
-                <a href="#" class="btn btn-primary">New Stock</a>
+            <div class="col-6 d-flex justify-content-end align-items-center" v-scope="addItemComponent({})">
             </div>
         </div>
         <div class="mw-100 overflow-auto">
@@ -43,4 +46,13 @@
         </div>
     </div>
 </main>
+{% endblock %}
+
+{% block page_js %}
+<script>
+    PetiteVue.createApp({
+        page_session,
+        addItemComponent,
+    }).mount();
+</script>
 {% endblock %}

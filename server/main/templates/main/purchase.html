@@ -1,0 +1,49 @@
+{% extends 'main/base.html' %}
+
+{% block content %}
+<main role="main">
+    <div class="container mt-3">
+        <div class="row border-bottom border-3">
+            <h1>Receipt #{{ purchase.id }} - {{ momentjs(purchase.added_on).format('MMMM DD, YYYY') }}</h1>
+        </div>
+        <div class="row">
+            <div class="col-12 overflow-auto">
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th scope="col">Item</th>
+                            <th scope="col">Quantity</th>
+                            <th scope="col">Price</th>
+                            <th scope="col">Total</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for item in purchase.items %}
+                        <tr>
+                            <th scope="row">{{ item.item.name }}</th>
+                            <th>{{ item.quantity }}</th>
+                            <th>{{ item.price }}</th>
+                            <th>{{ item.total }}</th>
+                        </tr>
+                        {% endfor%}
+                        <tr>
+                            <th scope="row">Grand Total</th>
+                            <th></th>
+                            <th></th>
+                            <th>{{ purchase.total }}</th>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</main>
+{% endblock %}
+
+{% block page_content %}
+<script>
+    PetiteVue.createApp({
+        page_session,
+    }).mount();
+</script>
+{% endblock %}

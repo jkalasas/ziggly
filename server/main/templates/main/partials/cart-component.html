@@ -121,6 +121,10 @@
                     },
                     contentType: 'application/json',
                     data: JSON.stringify(page_session.cart),
+                    success: data => {
+                        if (data.success)
+                            window.location.href = `/purchase/${data.result.id}`;
+                    }
                 });
             },
             get grandTotal() {

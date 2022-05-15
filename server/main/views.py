@@ -1,6 +1,4 @@
 from datetime import datetime
-from multiprocessing.sharedctypes import Value
-from statistics import quantiles
 
 from flask import abort, g, redirect, render_template, request, session, url_for
 from sqlalchemy import func, text
@@ -63,12 +61,35 @@ def inventory():
     except ValueError:
         page = 1
     stocks = Stock.query.order_by(Stock.added_on.desc()).paginate(page, 20)
-    items = Stock
     context = {
         'title': 'Inventory',
         'stocks': stocks,
     }
     return render_template('main/inventory.html', **context)
+
+@bp.get('/purchase')
+@login_required
+def purchases():
+    try:
+        page = int(request.args.get('p', 1))
+    except ValueError:
+        page = 1
+    purchases = Purchase.query.order_by(Purchase.added_on.desc()).paginate(page, 20)
+    context = {
+        'title': 'Purchases',
+        'purchases': purchases,
+    }
+    return render_template('main/purchases.html', **context)
+
+@bp.get('/purchase/<int:id>')
+@login_required
+def receipt(id: int):
+    purchase = Purchase.query.filter(Purchase.id==id).first_or_404()
+    context = {
+        'title': f'Purchase {purchase.id}',
+        'purchase': purchase
+    }
+    return render_template('main/purchase.html', **context)
 
 @bp.get('/cashier')
 @login_required
