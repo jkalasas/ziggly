@@ -162,7 +162,7 @@
                     const oldItem = page_session.cart.getItem(data.id);
                     component.currentItem.stock = data.stock - (oldItem ? oldItem.quantity : 0);
                     component.currentItem.name = data.name;
-                    component.currentItem.price += data.price;
+                    component.currentItem.price = data.price;
                 }
             });
         };
