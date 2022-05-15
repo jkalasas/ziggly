@@ -64,7 +64,7 @@ def purchase():
         total = quantity * qitem.price
         grand_total += total
         purchased_items.append(
-            ItemPurchase(item=qitem, quantity=quantity, total=total)
+            ItemPurchase(item=qitem, quantity=quantity, price=qitem.price, total=total)
         )
     purchase = Purchase(items=purchased_items, total=grand_total)
     db.session.add(purchase)

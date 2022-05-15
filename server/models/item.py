@@ -72,9 +72,10 @@ class ItemPurchase(db.Model):
     __tablename__ = 'item_purchase'
     item_id = db.Column(db.Integer, db.ForeignKey('item.id'), primary_key=True)
     purchase_id = db.Column(db.Integer, db.ForeignKey('purchase.id'), primary_key=True)
+    price = db.Column(db.Float, nullable=False)
     discount = db.Column(db.Float, default=0)
     quantity = db.Column(db.Integer, nullable=False)
-    total = db.Column(db.Integer, nullable=False)
+    total = db.Column(db.Float, nullable=False)
 
     @hybrid_property
     def discounted_total(self):
