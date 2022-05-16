@@ -25,7 +25,6 @@ def referer_or(alternative):
 @bp.get('/')
 @login_required
 def index():
-    print(Item.most_sales())
     most_sales, total_sales = Item.most_sales()
     most_sold, total_sold = Item.most_sold()
     context = {
