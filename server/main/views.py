@@ -1,11 +1,13 @@
-from datetime import datetime, timedelta
+from datetime import datetime
 
-from flask import abort, g, redirect, render_template, request, session, url_for
-from sqlalchemy import func, text
+from flask import (abort, g, redirect, render_template,
+                   request, session, url_for)
+from sqlalchemy import text
 
 from server.models import db, Item, ItemPurchase, Purchase, User, Stock
 from server.plugins.login_manager import login_required, login_user, logout_user
 from . import bp
+
 
 @bp.before_app_request
 def before_app_request():
@@ -15,8 +17,10 @@ def before_app_request():
             g.user.last_access = datetime.utcnow()
             db.session.commit()
 
+
 def referer_or(alternative):
     return request.headers.get('Referer', alternative)
+
 
 @bp.get('/')
 @login_required
@@ -33,6 +37,7 @@ def index():
     }
     return render_template('main/index.html', **context)
 
+
 @bp.get('/login')
 def login_page():
     if getattr(g, 'user', None):
@@ -42,6 +47,7 @@ def login_page():
         'title': 'Login'
     }
     return render_template('main/login.html', **context)
+
 
 @bp.post('/login')
 def login():
@@ -54,11 +60,13 @@ def login():
         return redirect(url_for('main.index'))
     return redirect(url_for('main.login'))
 
+
 @bp.get('/logout')
 @login_required
 def logout():
     logout_user()
     return redirect(url_for('main.login'))
+
 
 @bp.get('/inventory')
 @login_required
@@ -74,6 +82,7 @@ def inventory():
     }
     return render_template('main/inventory.html', **context)
 
+
 @bp.get('/purchase')
 @login_required
 def purchases():
@@ -81,22 +90,25 @@ def purchases():
         page = int(request.args.get('p', 1))
     except ValueError:
         page = 1
-    purchases = Purchase.query.order_by(Purchase.added_on.desc()).paginate(page, 20)
+    purchases = Purchase.query.order_by(
+        Purchase.added_on.desc()).paginate(page, 20)
     context = {
         'title': 'Purchases',
         'purchases': purchases,
     }
     return render_template('main/purchases.html', **context)
 
+
 @bp.get('/purchase/<int:id>')
 @login_required
 def receipt(id: int):
-    purchase = Purchase.query.filter(Purchase.id==id).first_or_404()
+    purchase = Purchase.query.filter(Purchase.id == id).first_or_404()
     context = {
         'title': f'Purchase {purchase.id}',
         'purchase': purchase
     }
     return render_template('main/purchase.html', **context)
+
 
 @bp.get('/cashier')
 @login_required
@@ -106,10 +118,12 @@ def cashier():
     }
     return render_template('main/cashier.html', **context)
 
+
 @bp.get('/item')
 @login_required
 def items():
     return redirect(url_for('main.items_all'))
+
 
 @bp.post('/item')
 @login_required
@@ -121,6 +135,7 @@ def new_item():
     db.session.add(item)
     db.session.commit()
     return redirect(url_for('main.items_all'))
+
 
 @bp.get('/item/all')
 @login_required
@@ -136,15 +151,17 @@ def items_all():
     }
     return render_template('main/items.html', **context)
 
+
 @bp.get('/item/<int:id>')
 @login_required
 def item_info(id: int):
-    item = Item.query.filter(Item.id==id).first_or_404()
+    item = Item.query.filter(Item.id == id).first_or_404()
     stocks = item.stocks.order_by(Stock.added_on.desc()).limit(10)
     purchases = db.session.query(
         Purchase.id.label('id'), ItemPurchase.quantity.label('quantity'),
-        ItemPurchase.discounted_total.label('total'), Purchase.added_on.label('added_on')
-    ).select_from(Purchase).join(ItemPurchase).where(ItemPurchase.item_id==item.id).order_by(text('added_on DESC'))
+        ItemPurchase.discounted_total.label(
+            'total'), Purchase.added_on.label('added_on')
+    ).select_from(Purchase).join(ItemPurchase).where(ItemPurchase.item_id == item.id).order_by(text('added_on DESC'))
 
     context = {
         'title': item.name,
@@ -153,6 +170,7 @@ def item_info(id: int):
         'purchases': purchases,
     }
     return render_template('main/item.html', **context)
+
 
 @bp.post('/item/<int:id>')
 @login_required
@@ -164,19 +182,22 @@ def manage_item(id: int):
         return delete_item(id)
     abort(404)
 
+
 def update_item(id: int):
-    item = Item.query.filter(Item.id==id).first_or_404()
+    item = Item.query.filter(Item.id == id).first_or_404()
     item.name = request.form.get('name')
     item.price = request.form.get('price')
     item.bar_code = request.form.get('bar-code')
     db.session.commit()
     return redirect(referer_or(url_for('main.item_info', id=id)))
 
+
 def delete_item(id: int):
-    item = Item.query.filter(Item.id==id).first_or_404()
+    item = Item.query.filter(Item.id == id).first_or_404()
     db.session.delete(item)
     db.session.commit()
     return redirect(url_for('main.items_all'))
+
 
 @bp.get('/item/<int:id>/stock')
 @login_required
@@ -185,7 +206,7 @@ def item_stock(id: int):
         page = int(request.args.get('p', 1))
     except ValueError:
         page = 1
-    item: Item = Item.query.filter(Item.id==id).first_or_404()
+    item: Item = Item.query.filter(Item.id == id).first_or_404()
     stocks = item.stocks.order_by(Stock.added_on.desc()).paginate(page, 20)
     context = {
         'title': f'{item.name} Stocks',
@@ -193,6 +214,7 @@ def item_stock(id: int):
         'stocks': stocks
     }
     return render_template('main/item_stock.html', **context)
+
 
 @bp.post('/stock')
 @login_required
@@ -203,10 +225,12 @@ def add_stock():
     per_item_cost = request.form.get('per-item-cost')
     if not (item_id and quantity and cost and per_item_cost):
         abort(401)
-    stock = Stock(item_id=item_id, quantity=quantity, cost=cost, per_item_cost=per_item_cost)
+    stock = Stock(item_id=item_id, quantity=quantity,
+                  cost=cost, per_item_cost=per_item_cost)
     db.session.add(stock)
     db.session.commit()
     return redirect(referer_or(url_for('main.inventory')))
+
 
 @bp.post('/stock/<int:id>')
 @login_required
@@ -216,8 +240,9 @@ def manage_stock(id: int):
         return delete_stock(id)
     abort(404)
 
+
 def delete_stock(id: int):
-    stock = Stock.query.filter(Stock.id==id).first_or_404()
+    stock = Stock.query.filter(Stock.id == id).first_or_404()
     db.session.delete(stock)
     db.session.commit()
     return redirect(referer_or(url_for('main.inventory')))

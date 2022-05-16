@@ -7,8 +7,11 @@ db = SQLAlchemy()
 migrate = Migrate()
 
 def configure_logging(app: Flask) -> None:
-    """
-    Initialize file logging
+    """Initialize file logging
+    Parameters
+    ----------
+    app: Flask
+        the flask application
     """
     import logging
     from flask.logging import default_handler
@@ -23,6 +26,7 @@ def configure_logging(app: Flask) -> None:
     app.logger.addHandler(file_handler)
 
 def create_app() -> Flask:
+    "Creates the application and binds its necessary dependencies"
     app = Flask(__name__)
     app.config.from_object(os.getenv('CONFIG_TYPE', 'config.DevelopmentConfig'))
     configure_logging(app)
@@ -33,14 +37,23 @@ def create_app() -> Flask:
     return app
 
 def init_db(app: Flask) -> None:
-    """
-    Bind database modules to the Flask application
+    """Bind database modules to the Flask application
+    Parameters
+    ----------
+    app: Flask
+        the flask application
     """
     from . import models
     db.init_app(app)
     migrate.init_app(app, db)
 
 def init_plugins(app: Flask) -> None:
+    """Initializes and binds the plugins in the flask application
+    Parameters
+    ----------
+    app: Flask
+        the flask application
+    """
     from .plugins.currency import format_currency
     from .plugins.flask_session import Session
     from .plugins.csrf import CSRFProtect
@@ -52,8 +65,11 @@ def init_plugins(app: Flask) -> None:
     CSRFProtect(app)
 
 def register_blueprints(app: Flask) -> None:
-    """
-    Bind blueprints to its respected paths
+    """Bind blueprints to its respected paths
+    Parameters
+    ----------
+    app: Flask
+        the flask application
     """
     from .api import bp as api_bp
     from .main import bp as main_bp
@@ -61,7 +77,10 @@ def register_blueprints(app: Flask) -> None:
     app.register_blueprint(api_bp, url_prefix='/api/v1')
 
 def register_error_handlers(app: Flask) -> None:
-    """
-    Initialize global error handlers
+    """Initialize global error handlers
+    Parameters
+    ----------
+    app: Flask
+        the flask application
     """
     pass

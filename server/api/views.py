@@ -6,7 +6,7 @@ from server.plugins.login_manager import login_required
 from . import bp
 
 @bp.before_request
-@login_required
+@login_required # set every api call to require a login
 def before_request():
     pass
 
@@ -58,6 +58,7 @@ def purchase():
     data = request.json
     purchased_items = []
     grand_total = 0
+    # initialize purchase to avoid no purchase_id error for purchased items
     purchase = Purchase(total=0)
     for item in data.get('items', []):
         qitem = Item.query.filter(Item.id==item['id']).first_or_404()
