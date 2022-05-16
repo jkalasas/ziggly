@@ -1,4 +1,4 @@
-def format_currency(value: float | int) -> str:
+def format_currency(value: float) -> str:
     """Parses the value to a currency like format
     Returns
     -------
