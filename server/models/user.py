@@ -45,7 +45,7 @@ class User(db.Model):
     created_on = db.Column(db.DateTime, default=datetime.utcnow)
 
     @validates('email')
-    def validate_email(self, key, email: str) ->:
+    def validate_email(self, key, email: str) -> str:
         """Validates the email after setting
         Parameters
         ----------
