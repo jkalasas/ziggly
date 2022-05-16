@@ -61,7 +61,7 @@ class Item(db.Model, SerializerMixin):
     id = db.Column(db.Integer, primary_key=True)
     bar_code = db.Column(db.String(128), nullable=True)
     name = db.Column(db.String(200), nullable=False)
-    price = db.Column(db.Float, nullable=False)
+    price = db.Column(db.Float, default=0.0)
     added_on = db.Column(db.DateTime, default=datetime.utcnow)
     stocks = db.relationship('Stock', lazy="dynamic", cascade="all, delete-orphan",
                              backref=db.backref('item', uselist=False))
