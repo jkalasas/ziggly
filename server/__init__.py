@@ -32,7 +32,7 @@ def create_app() -> Flask:
     configure_logging(app)
     init_db(app)
     init_plugins(app)
-    register_error_handlers(app)
+    register_app_events(app)
     register_blueprints(app)
     return app
 
@@ -76,11 +76,21 @@ def register_blueprints(app: Flask) -> None:
     app.register_blueprint(main_bp)
     app.register_blueprint(api_bp, url_prefix='/api/v1')
 
-def register_error_handlers(app: Flask) -> None:
-    """Initialize global error handlers
+def register_app_events(app: Flask) -> None:
+    """Initialize global app events
     Parameters
     ----------
     app: Flask
         the flask application
     """
-    pass
+    from .models import User
+    @app.before_first_request
+    def initialize_default_user(*args, **kwargs):
+        "Initializes default user"
+        username = os.getenv('ADMIN_USERNAME', 'admin')
+        password = os.getenv('ADMIN_PASSWORD', 'admin')
+        if User.query.count() > 0:
+            return
+        user = User(username=username, password=password)
+        db.session.add(user)
+        db.session.commit()
