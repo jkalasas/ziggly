@@ -21,7 +21,7 @@ def upgrade():
     op.create_table('item',
     sa.Column('id', sa.Integer(), nullable=False),
     sa.Column('name', sa.String(length=200), nullable=False),
-    sa.Column('price', sa.Float(), nullable=False),
+    sa.Column('price', sa.Float(), nullable=True),
     sa.Column('added_on', sa.DateTime(), nullable=True),
     sa.PrimaryKeyConstraint('id')
     )
